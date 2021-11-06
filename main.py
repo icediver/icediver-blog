@@ -11,12 +11,15 @@ from sqlalchemy.orm import relationship
 from flask_login import UserMixin, login_user, LoginManager, login_required, current_user, logout_user
 from forms import CreatePostForm, RegisterForm, LoginForm, CommentForm
 from flask_gravatar import Gravatar
+from dotenv import load_dotenv
+import os
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = '8BYkEfBA6O6donzWlSihBXox7C0sKR6b'
+load_dotenv('vinenv/.env')
+app.config['SECRET_KEY'] = os.getenv('db_key')
 ckeditor = CKEditor(app)
 Bootstrap(app)
-
+print()
 ##CONNECT TO DB
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///blog.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -92,6 +95,7 @@ gravatar = Gravatar(app,
                     force_lower=False,
                     use_ssl=False,
                     base_url=None)
+
 
 # <editor-fold desc="Швг 2 нужно создать функцию user_loader.">
 @login_manager.user_loader
@@ -185,9 +189,9 @@ def show_post(post_id):
     if form.validate_on_submit():
         if current_user.is_authenticated:
             new_comment = Comment(
-            text = request.form['comment'],
-            comment_author = current_user,
-            post_id = post_id
+                text=request.form['comment'],
+                comment_author=current_user,
+                post_id=post_id
             )
             db.session.add(new_comment)
             db.session.commit()
@@ -200,6 +204,7 @@ def show_post(post_id):
     # Выбирает только коментарии к текущему посту
     comments = Comment.query.filter_by(post_id=post_id).all()
     return render_template("post.html", post=requested_post, form=form, comments=comments)
+
 
 @app.route("/about")
 def about():
