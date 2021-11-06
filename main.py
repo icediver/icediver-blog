@@ -1,5 +1,4 @@
 from functools import wraps
-
 import werkzeug
 from flask import Flask, render_template, redirect, url_for, flash, request, abort
 from flask_bootstrap import Bootstrap
